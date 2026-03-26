@@ -12,6 +12,7 @@ class Project(models.Model):
         
     status = models.CharField(max_length=20, choices=StatusChoices.choices, default=StatusChoices.PLANNING)
     is_demo = models.BooleanField(default=False, help_text="Si es True, este proyecto lo verá el rol Invitado Demo")
+    location = models.CharField(max_length=255, blank=True, null=True, help_text="Dirección o sector del proyecto. Ej: Calle 80 con Av. Boyacá, Bogotá")
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

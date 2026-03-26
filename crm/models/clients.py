@@ -3,6 +3,7 @@ from django.db import models
 
 class Client(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    identification = models.CharField(max_length=20, unique=True, null=True, blank=True, help_text="Número de cédula o documento de identidad")
     first_name = models.CharField(max_length=100)
     last_name = models.CharField(max_length=100)
     email = models.EmailField(unique=True, null=True, blank=True)

@@ -1,7 +1,9 @@
 import uuid
+from django.conf import settings
 from django.db import models
 # ¡Aquí ocurre la magia! Traemos el Proyecto desde el catálogo
-from catalogue.models import Project 
+from catalogue.models import Project
+from catalogue.models.properties import Property
 from .unit_prices import Activity
 from .resources import Resource
 
@@ -16,6 +18,14 @@ class ProjectPhase(models.Model):
     start_date = models.DateField(null=True, blank=True, verbose_name="Fecha de Inicio Estimada")
     end_date = models.DateField(null=True, blank=True, verbose_name="Fecha de Fin Estimada")
 
+    class PhaseStatusChoices(models.TextChoices):
+        PENDING = 'PENDING', 'Pendiente'
+        ACTIVE = 'ACTIVE', 'Activa'
+        PAUSED = 'PAUSED', 'Pausada'
+        COMPLETED = 'COMPLETED', 'Completada'
+
+    status = models.CharField(max_length=20, choices=PhaseStatusChoices.choices, default=PhaseStatusChoices.PENDING, verbose_name="Estado de la Fase")
+
     class Meta:
         verbose_name = "Fase del Proyecto"
         verbose_name_plural = "3. Fases de Obra"
@@ -29,7 +39,9 @@ class Task(models.Model):
     """La Tarjeta del Kanban. Lo que el maestro de obra tiene que hacer hoy."""
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     phase = models.ForeignKey(ProjectPhase, on_delete=models.CASCADE, related_name='tasks', verbose_name="Fase de la Obra")
-    
+    # Unidad (apartamento/local) a la que corresponde esta tarea. Null = área común.
+    unit = models.ForeignKey(Property, on_delete=models.SET_NULL, null=True, blank=True, related_name='construction_tasks', verbose_name="Unidad del Proyecto", help_text="Apartamento o local que se está construyendo. Vacío si es área común.")
+
     # ¿Qué A.P.U. (receta) vamos a construir en esta tarjeta?
     activity = models.ForeignKey(Activity, on_delete=models.RESTRICT, verbose_name="Actividad (A.P.U.) a ejecutar")
 
@@ -65,6 +77,7 @@ class TaskConsumption(models.Model):
     
     quantity_used = models.DecimalField(max_digits=12, decimal_places=4, verbose_name="Cantidad Real Usada")
     date_reported = models.DateField(auto_now_add=True, verbose_name="Fecha del Reporte")
+    logged_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True, related_name='consumption_reports', verbose_name="Reportado por", help_text="Usuario que registró este consumo real.")
 
     class Meta:
         verbose_name = "Reporte de Consumo"

@@ -23,6 +23,8 @@ class Property(models.Model):
         AVAILABLE = 'AVAILABLE', 'Disponible'
         RESERVED = 'RESERVED', 'Reservado'
         SOLD = 'SOLD', 'Vendido'
+        BUILDING = 'BUILDING', 'En Construcción'
+        DELIVERED = 'DELIVERED', 'Entregado'
         
     status = models.CharField(max_length=20, choices=StatusChoices.choices, default=StatusChoices.AVAILABLE)
 

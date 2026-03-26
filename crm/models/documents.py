@@ -15,8 +15,9 @@ class Document(models.Model):
         
     document_type = models.CharField(max_length=30, choices=DocumentTypeChoices.choices)
     
-    # Aquí en el futuro conectarás S3 o el storage que uses
-    file_url = models.URLField(max_length=500, help_text="URL del archivo en el Storage (AWS S3, etc.)", blank=True, null=True)
+    # La key (ruta) del objeto en S3. Ej: "documents/clients/uuid/cedula.pdf"
+    # Se usa para generar URLs presignadas en cada solicitud, no se guarda la URL que expira.
+    s3_key = models.CharField(max_length=500, help_text="Ruta del objeto en AWS S3. Ej: documents/clients/{uuid}/cedula.pdf", blank=True, null=True)
     
     class StatusChoices(models.TextChoices):
         PENDING = 'PENDING', 'Pendiente de revisión'

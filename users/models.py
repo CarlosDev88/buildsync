@@ -9,7 +9,9 @@ class CustomUser(AbstractUser):
     # Definición estricta de Roles usando TextChoices
     class RoleChoices(models.TextChoices):
         SUPER_ADMIN = 'SUPER_ADMIN', 'Super Administrador'
+        GERENTE = 'GERENTE', 'Gerente de Proyecto'
         ASESOR = 'ASESOR', 'Asesor Comercial'
+        ANALISTA_CREDITO = 'ANALISTA_CREDITO', 'Analista de Crédito'
         JEFE_OBRA = 'JEFE_OBRA', 'Jefe de Obra'
         DEMO_GUEST = 'DEMO_GUEST', 'Invitado Demo'
 

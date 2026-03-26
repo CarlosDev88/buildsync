@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'catalogue',
     'crm',
     'construction',
+    'loanflow',
 ]
 
 MIDDLEWARE = [
