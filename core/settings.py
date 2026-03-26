@@ -37,6 +37,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework',
+    'rest_framework_simplejwt',
     'users',
     'catalogue',
     'crm',
@@ -123,3 +125,42 @@ STATIC_URL = 'static/'
 
 # Custom User Model
 AUTH_USER_MODEL = 'users.CustomUser'
+
+# ──────────────────────────────────────────
+# Django REST Framework
+# ──────────────────────────────────────────
+REST_FRAMEWORK = {
+    # Por defecto toda la API requiere autenticación JWT.
+    # Los endpoints públicos (vitrina, simulador) lo anulan con AllowAny.
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ),
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+    ),
+    'DEFAULT_RENDERER_CLASSES': (
+        'rest_framework.renderers.JSONRenderer',
+    ),
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 20,
+}
+
+# ──────────────────────────────────────────
+# Simple JWT
+# ──────────────────────────────────────────
+from datetime import timedelta
+
+SIMPLE_JWT = {
+    # Access token dura 8 horas (una jornada laboral).
+    # Refresh token dura 7 días.
+    'ACCESS_TOKEN_LIFETIME': timedelta(hours=8),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=7),
+    'ROTATE_REFRESH_TOKENS': True,
+    'BLACKLIST_AFTER_ROTATION': False,  # Sin blacklist por ahora; activar en prod con app adicional
+
+    'AUTH_HEADER_TYPES': ('Bearer',),
+
+    # Incluimos campos extra en el payload del token para no necesitar
+    # un roundtrip a la DB en cada request para saber el rol del usuario.
+    'TOKEN_OBTAIN_SERIALIZER': 'users.serializers.CustomTokenObtainPairSerializer',
+}
